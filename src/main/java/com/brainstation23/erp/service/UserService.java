@@ -1,5 +1,7 @@
 package com.brainstation23.erp.service;
 
+import java.util.Optional;
+
 import com.brainstation23.erp.exception.custom.custom.NotFoundException;
 	import com.brainstation23.erp.mapper.OrganizationMapper;
 import com.brainstation23.erp.mapper.UserMapper;
@@ -13,19 +15,25 @@ import com.brainstation23.erp.persistence.entity.UserEntity;
 import com.brainstation23.erp.persistence.repository.OrganizationRepository;
 import com.brainstation23.erp.persistence.repository.UserRepository;
 import com.brainstation23.erp.util.RandomUtils;
-	import lombok.RequiredArgsConstructor;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.RequiredArgsConstructor;
 	import lombok.extern.slf4j.Slf4j;
 	import org.springframework.data.domain.Page;
 	import org.springframework.data.domain.Pageable;
 	import org.springframework.stereotype.Service;
 
-	import java.util.UUID;
+import java.util.Date;
+import java.util.UUID;
 
 @Slf4j
 @RequiredArgsConstructor
 @Service
 public class UserService {
     public static final String USER_NOT_FOUND = "User Not Found";
+    private static final long JWT_EXPIRATION_TIME = 864_000_000; // 10 days in milliseconds
+    private static final String JWT_SECRET_KEY = "my_secret_key";
+
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
@@ -59,9 +67,29 @@ public class UserService {
 //        userRepository.save(entity);
 //    }
 
-
-
     public void deleteOne(UUID id) {
         userRepository.deleteById(id);
     }
+
+   public String authenticate(String email, String password) throws Exception {
+        // Find user by email
+        UserEntity userEntity =  userRepository.findByEmail(email)
+                .orElseThrow(() -> new NotFoundException(USER_NOT_FOUND));
+
+        // Check if password matches
+        if (!userEntity.getPassword().equals(password)) {
+            throw new Exception("Invalid credentials");
+        }
+
+        // Create JWT token
+        String token = Jwts.builder()
+                .setSubject(userEntity.getId().toString())
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + JWT_EXPIRATION_TIME))
+                .signWith(SignatureAlgorithm.HS512, JWT_SECRET_KEY.getBytes())
+                .compact();
+        return token;
+    }
+
+
 }
