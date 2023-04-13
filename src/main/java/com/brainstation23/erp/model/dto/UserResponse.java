@@ -22,4 +22,7 @@ public class UserResponse {
 
     @Schema(description = "User Password", example = "ORG000001")
 	private String password;
+
+	@Schema(description = "User Role", example = "EMPLOYEE")
+	private String role;
 }
