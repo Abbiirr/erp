@@ -83,6 +83,7 @@ public class UserService {
 
         // Create JWT token
         String token = Jwts.builder()
+                .claim("role", userEntity.getRole())
                 .setSubject(userEntity.getId().toString())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + JWT_EXPIRATION_TIME))
