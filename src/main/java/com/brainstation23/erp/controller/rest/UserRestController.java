@@ -35,7 +35,7 @@ public class UserRestController {
 
 	@Operation(summary = "Get All Users")
 	@GetMapping
-	public ResponseEntity<Page<UserResponse>> getAll(@ParameterObject Pageable pageable, @RequestHeader(value = "Authorization", required = true) String authHeader) throws Exception {
+	public ResponseEntity<Page<UserResponse>> getAll(@ParameterObject Pageable pageable, @RequestHeader(value = "optional-value", required = true) String authHeader) throws Exception {
 		log.info("Getting List of Users");
 		System.out.println("Trying to get all users");
 
