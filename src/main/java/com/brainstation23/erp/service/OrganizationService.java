@@ -1,24 +1,24 @@
 package com.brainstation23.erp.service;
 
-import com.brainstation23.erp.exception.custom.custom.NotFoundException;
-import com.brainstation23.erp.mapper.OrganizationMapper;
-import com.brainstation23.erp.model.domain.Organization;
-import com.brainstation23.erp.model.dto.CreateOrganizationRequest;
-import com.brainstation23.erp.model.dto.UpdateOrganizationRequest;
-import com.brainstation23.erp.persistence.entity.OrganizationEntity;
-import com.brainstation23.erp.persistence.repository.OrganizationRepository;
-import com.brainstation23.erp.util.RandomUtils;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
+	import com.brainstation23.erp.exception.custom.custom.NotFoundException;
+	import com.brainstation23.erp.mapper.OrganizationMapper;
+	import com.brainstation23.erp.model.domain.Organization;
+	import com.brainstation23.erp.model.dto.CreateOrganizationRequest;
+	import com.brainstation23.erp.model.dto.UpdateOrganizationRequest;
+	import com.brainstation23.erp.persistence.entity.OrganizationEntity;
+	import com.brainstation23.erp.persistence.repository.OrganizationRepository;
+	import com.brainstation23.erp.util.RandomUtils;
+	import lombok.RequiredArgsConstructor;
+	import lombok.extern.slf4j.Slf4j;
+	import org.springframework.data.domain.Page;
+	import org.springframework.data.domain.Pageable;
+	import org.springframework.stereotype.Service;
 
-import java.util.UUID;
+	import java.util.UUID;
 
-@Slf4j
-@RequiredArgsConstructor
-@Service
+	@Slf4j
+	@RequiredArgsConstructor
+	@Service
 public class OrganizationService {
 	public static final String ORGANIZATION_NOT_FOUND = "Organization Not Found";
 	private final OrganizationRepository organizationRepository;
