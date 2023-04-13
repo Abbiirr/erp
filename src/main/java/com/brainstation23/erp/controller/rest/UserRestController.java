@@ -6,6 +6,8 @@ import com.brainstation23.erp.model.dto.CreateUserRequest;
 import com.brainstation23.erp.model.dto.UserResponse;
 //import com.brainstation23.erp.model.dto.UpdateUserRequest;
 import com.brainstation23.erp.service.UserService;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -29,13 +31,46 @@ public class UserRestController {
 	private final UserService userService;
 	private final UserMapper userMapper;
 
+	private static final String JWT_SECRET_KEY = "my_secret_key";
+
 	@Operation(summary = "Get All Users")
 	@GetMapping
-	public ResponseEntity<Page<UserResponse>> getAll(@ParameterObject Pageable pageable) {
+	public ResponseEntity<Page<UserResponse>> getAll(@ParameterObject Pageable pageable, @RequestHeader(value = "Authorization", required = true) String authHeader) throws Exception {
 		log.info("Getting List of Users");
+		System.out.println("Trying to get all users");
+
+		System.out.println("authHeader = " + authHeader);
+
+		if(authHeader == null || !authHeader.startsWith("Bearer ")){
+			throw new Exception("Authorization header must be provided");
+		}
+
+		// Extract token from header
+		String token = authHeader.substring(7);
+
+		System.out.println("token = " + token);
+
+		// Parse token and check role
+		Claims claims = null;
+		try {
+			claims = Jwts.parser().setSigningKey(JWT_SECRET_KEY.getBytes()).parseClaimsJws(token).getBody();
+		} catch (Exception e) {
+			System.out.println("Failed to parse JWT token");
+			e.printStackTrace();
+			throw new Exception("Invalid JWT token");
+		}
+
+		String roles = (String) claims.get("role");
+		System.out.println("roles = " + roles);
+
+		if (!roles.contains("ADMIN")) {
+			throw new Exception("Only admins can access this endpoint");
+		}
+
 		var domains = userService.getAll(pageable);
 		return ResponseEntity.ok(domains.map(userMapper::domainToResponse));
 	}
+
 
 	@Operation(summary = "Get Single User")
 	@GetMapping("{id}")
