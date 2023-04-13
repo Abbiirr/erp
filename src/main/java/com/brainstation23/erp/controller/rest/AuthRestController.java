@@ -9,6 +9,8 @@ import com.brainstation23.erp.model.dto.UserResponse;
 //import com.brainstation23.erp.model.dto.UpdateUserRequest;
 import com.brainstation23.erp.service.UserService;
 import com.brainstation23.erp.util.JwtTokenUtil;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.naming.AuthenticationException;
 import javax.validation.Valid;
+import java.util.List;
 import java.util.UUID;
 
 @Tag(name = "User")
@@ -33,7 +36,7 @@ import java.util.UUID;
 public class AuthRestController {
 	 private final UserService userService;
     private final JwtTokenUtil jwtTokenUtil;
-
+    private static final String JWT_SECRET_KEY = "my_secret_key";
     @Operation(summary = "Authenticate User")
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
@@ -44,6 +47,10 @@ public class AuthRestController {
 //            User user = userService.authenticate(loginRequest.getEmail(), loginRequest.getPassword());
 //            String token = jwtTokenUtil.generateToken(user);
             String token = userService.authenticate(loginRequest.getEmail(), loginRequest.getPassword());
+
+            Claims claims = Jwts.parser().setSigningKey(JWT_SECRET_KEY.getBytes()).parseClaimsJws(token).getBody();
+            String roles = (String) claims.get("role");
+            System.out.println("User has roles: " + roles);
             return ResponseEntity.ok(token);
 
         } catch (Exception ex) {
