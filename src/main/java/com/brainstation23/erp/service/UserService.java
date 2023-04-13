@@ -46,7 +46,8 @@ public class UserService {
         entity.setId(UUID.randomUUID())
                 .setName(createRequest.getName())
                 .setEmail(createRequest.getEmail())
-                .setPassword(createRequest.getPassword());
+                .setPassword(createRequest.getPassword())
+                .setRole(createRequest.getRole());
         var createdEntity = userRepository.save(entity);
         return createdEntity.getId();
     }
@@ -57,6 +58,8 @@ public class UserService {
 //        entity.setName(updateRequest.getName());
 //        userRepository.save(entity);
 //    }
+
+
 
     public void deleteOne(UUID id) {
         userRepository.deleteById(id);
