@@ -21,7 +21,8 @@ import lombok.RequiredArgsConstructor;
 	import lombok.extern.slf4j.Slf4j;
 	import org.springframework.data.domain.Page;
 	import org.springframework.data.domain.Pageable;
-	import org.springframework.stereotype.Service;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.UUID;
@@ -51,10 +52,12 @@ public class UserService {
 
     public UUID createOne(CreateUserRequest createRequest) {
         var entity = new UserEntity();
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        String hashedPassword = passwordEncoder.encode(createRequest.getPassword());
         entity.setId(UUID.randomUUID())
                 .setName(createRequest.getName())
                 .setEmail(createRequest.getEmail())
-                .setPassword(createRequest.getPassword())
+                .setPassword(hashedPassword)
                 .setRole(createRequest.getRole());
         var createdEntity = userRepository.save(entity);
         return createdEntity.getId();
@@ -76,10 +79,23 @@ public class UserService {
         UserEntity userEntity =  userRepository.findByEmail(email)
                 .orElseThrow(() -> new NotFoundException(USER_NOT_FOUND));
 
-        // Check if password matches
-        if (!userEntity.getPassword().equals(password)) {
-            throw new Exception("Invalid credentials");
-        }
+        System.out.println("Password: " + userEntity.getPassword());
+
+
+       BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+       boolean matches = passwordEncoder.matches(password, userEntity.getPassword());
+
+       if (matches) {
+           System.out.println("Password matches!");
+       } else {
+           System.out.println("Password does not match.");
+           throw new Exception("Invalid credentials");
+       }
+
+//        // Check if password matches
+//        if (!userEntity.getPassword().equals(password)) {
+//            throw new Exception("Invalid credentials");
+//        }
 
         // Create JWT token
         String token = Jwts.builder()
