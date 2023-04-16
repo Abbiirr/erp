@@ -60,6 +60,10 @@ public class UserService {
                 .setPassword(hashedPassword)
                 .setRole(createRequest.getRole());
         var createdEntity = userRepository.save(entity);
+
+        var user = userMapper.entityToDomain(createdEntity);
+        System.out.println("User: " + user);
+        System.out.println("User: " + user.getCreatedAt());
         return createdEntity.getId();
     }
 

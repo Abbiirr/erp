@@ -25,4 +25,10 @@ public class UserResponse {
 
 	@Schema(description = "User Role", example = "EMPLOYEE")
 	private String role;
+
+	@Schema(description = "User Created At", example = "2021-05-01T00:00:00.000Z")
+	private String createdAt;
+
+	@Schema(description = "User Updated At", example = "2021-05-01T00:00:00.000Z")
+	private String updatedAt;
 }
