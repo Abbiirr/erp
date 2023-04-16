@@ -47,7 +47,7 @@ As an Employee user, I can
 - [x] Code Formatter: Spotless
 - [ ] Apply Spring Security
 - [X] Global Exception Handler
-- [ ] Implement JPA Auditing
+- [X] Implement JPA Auditing
 - [X] Write Unit Test
 - [ ] Setup different database driver in different profile
 - [ ] Upgrade to Spring Boot 3
