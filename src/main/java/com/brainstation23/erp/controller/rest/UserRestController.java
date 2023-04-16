@@ -1,6 +1,7 @@
 package com.brainstation23.erp.controller.rest;
 
 
+import com.brainstation23.erp.exception.custom.custom.UnauthorizedAccessException;
 import com.brainstation23.erp.mapper.UserMapper;
 import com.brainstation23.erp.model.dto.CreateUserRequest;
 import com.brainstation23.erp.model.dto.UserResponse;
@@ -64,7 +65,7 @@ public class UserRestController {
 		System.out.println("roles = " + roles);
 
 		if (!roles.contains("ADMIN")) {
-			throw new Exception("Only admins can access this endpoint");
+			throw new UnauthorizedAccessException("Only admins can access this endpoint");
 		}
 
 		var domains = userService.getAll(pageable);
