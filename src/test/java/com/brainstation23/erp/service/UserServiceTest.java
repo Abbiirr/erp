@@ -64,7 +64,7 @@ public class UserServiceTest {
 //        assertEquals(id, createdUserId);
 
         // Verify that the user was saved to the database
-        UserEntity savedEntity = entityManager.find(UserEntity.class, id);
+//        UserEntity savedEntity = entityManager.find(UserEntity.class, id);
 ////        assertNotNull(savedEntity);
 //        assertEquals(entity.getName(), savedEntity.getName());
 //        assertEquals(entity.getEmail(), savedEntity.getEmail());
