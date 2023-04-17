@@ -4,7 +4,6 @@ plugins {
 	// spring boot
 	id 'org.springframework.boot' version '2.7.10'
 	id 'io.spring.dependency-management' version '1.0.15.RELEASE' // transitive dependency
-	id "com.microsoft.azure.azurewebapp" version "1.2.0"
 }
 
 group = 'com.brainstation-23'
@@ -66,20 +65,8 @@ dependencies {
 	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
 }
-
-mainClass = 'com.brainstation23.erp.ErpApplication'
-
-jar {
-	manifest {
-		attributes(
-				'Main-Class': mainClass
-		)
-	}
-}
-
