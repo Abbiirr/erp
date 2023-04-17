@@ -73,20 +73,13 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 
-azurewebapp {
-	subscription = 'bd741f15-a856-4cc5-8670-86d4caf31150'
-	resourceGroup = 'spring-library'
-	appName = 'abir-erp-demo'
-	region = 'eastus'
-	runtime {
-		os = 'Linux'
-		webContainer = 'Java SE' // or 'Java SE' if you want to run an executable jar
-		javaVersion = 'Java 17'
+mainClassName = 'com.brainstation23.erp.ErpApplication'
+
+jar {
+	manifest {
+		attributes(
+				'Main-Class': mainClassName
+		)
 	}
-
-}
-
-springBoot {
-	mainClass = 'com.brainstation23.erp.ErpApplication'
 }
 
