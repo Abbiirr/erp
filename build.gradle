@@ -80,7 +80,7 @@ azurewebapp {
 	region = 'eastus'
 	runtime {
 		os = 'Linux'
-		webContainer = 'Tomcat 10.0' // or 'Java SE' if you want to run an executable jar
+		webContainer = 'Java SE' // or 'Java SE' if you want to run an executable jar
 		javaVersion = 'Java 17'
 	}
 
