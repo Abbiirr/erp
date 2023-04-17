@@ -86,3 +86,7 @@ azurewebapp {
 
 }
 
+springBoot {
+	mainClassName = 'com.brainstation-23.erp.ERPApplication'
+}
+
