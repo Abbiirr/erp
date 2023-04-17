@@ -73,12 +73,12 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 
-mainClassName = 'com.brainstation23.erp.ErpApplication'
+mainClass = 'com.brainstation23.erp.ErpApplication'
 
 jar {
 	manifest {
 		attributes(
-				'Main-Class': mainClassName
+				'Main-Class': mainClass
 		)
 	}
 }
