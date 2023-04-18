@@ -56,4 +56,10 @@ public class GlobalExceptionHandler {
         log.error("A custom exception occurred: ", ex);
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<String> handleCustomException(RuntimeException ex) {
+        log.error("A custom exception occurred: ", ex);
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
 }

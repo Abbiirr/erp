@@ -60,12 +60,18 @@ public class UserRestController {
 
 
 	@Operation(summary = "Get Single User")
-	@GetMapping("{id}")
-	public ResponseEntity<UserResponse> getOne(@PathVariable UUID id) {
-		log.info("Getting Details of User({})", id);
-		var domain = userService.getOne(id);
-		return ResponseEntity.ok(userMapper.domainToResponse(domain));
-	}
+@GetMapping("{id}")
+public ResponseEntity<UserResponse> getOne(@PathVariable UUID id, @RequestHeader(value = "optional-value", required = true) String authHeader) throws Exception {
+    log.info("Getting Details of User({})", id);
+
+    userInputValidationService.validateAuthorizationHeader(authHeader);
+
+    userAuthorizationService.authorizeRequest(authHeader);
+
+    var domain = userService.getOne(id);
+    return ResponseEntity.ok(userMapper.domainToResponse(domain));
+}
+
 
 
 //	@Operation(summary = "Update Single User")
