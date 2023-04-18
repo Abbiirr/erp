@@ -45,13 +45,13 @@ As an Employee user, I can
 - [x] API Doc: Swagger
 - [x] Mapper: Mapstruct
 - [x] Code Formatter: Spotless
-- [ ] Apply Spring Security
+- [X] Apply Spring Security
 - [X] Global Exception Handler
 - [X] Implement JPA Auditing
 - [X] Write Unit Test
-- [ ] Setup different database driver in different profile
+- [X] Setup different database driver in different profile
 - [ ] Upgrade to Spring Boot 3
-- [ ] Deployment (profile: develop)
+- [X] Deployment (profile: develop)
 - [ ] Update Documentation (README.md)
 
 ## How to Build & Run
