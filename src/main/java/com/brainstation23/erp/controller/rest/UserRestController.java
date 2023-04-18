@@ -80,15 +80,7 @@ public class UserRestController {
 		var domain = userService.getOne(id);
 		return ResponseEntity.ok(userMapper.domainToResponse(domain));
 	}
-
-	@Operation(summary = "Create Single User")
-	@PostMapping("/signup")
-	public ResponseEntity<Void> createOne(@RequestBody @Valid CreateUserRequest createRequest) {
-		log.info("Creating an User: {} ", createRequest);
-		var id = userService.createOne(createRequest);
-		var location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(id).toUri();
-		return ResponseEntity.created(location).build();
-	}
+	
 
 //	@Operation(summary = "Update Single User")
 //	@PutMapping("{id}")

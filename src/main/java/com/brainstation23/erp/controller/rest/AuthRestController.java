@@ -37,6 +37,15 @@ public class AuthRestController {
 	 private final UserService userService;
     private final JwtTokenUtil jwtTokenUtil;
     private static final String JWT_SECRET_KEY = "my_secret_key";
+
+    @Operation(summary = "Create Single User")
+	@PostMapping("/signup")
+	public ResponseEntity<Void> createOne(@RequestBody @Valid CreateUserRequest createRequest) {
+		log.info("Creating an User: {} ", createRequest);
+		var id = userService.createOne(createRequest);
+		var location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(id).toUri();
+		return ResponseEntity.created(location).build();
+	}
     @Operation(summary = "Authenticate User")
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
