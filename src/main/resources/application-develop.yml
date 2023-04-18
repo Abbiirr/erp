@@ -1,8 +1,0 @@
-spring:
-  datasource:
-    url: jdbc:postgresql://dpg-cgv2rrpjvhtmig7sbl30-a.oregon-postgres.render.com:5432/erp_trainee?user=erp_trainee_user&password=WnfbPrNgTqRGCLZkrsNbXMjJlAekMBUY
-    username: erp_trainee_user
-    password: WnfbPrNgTqRGCLZkrsNbXMjJlAekMBUY
-    driverClassName: org.postgresql.Driver
-  jpa:
-    spring.jpa.database-platform: org.hibernate.dialect.H2Dialect
