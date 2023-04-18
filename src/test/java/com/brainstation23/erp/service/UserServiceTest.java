@@ -1,9 +1,15 @@
 package com.brainstation23.erp.service;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
+
+import com.brainstation23.erp.exception.custom.custom.AlreadyExistsException;
 import com.brainstation23.erp.mapper.UserMapper;
+import com.brainstation23.erp.model.domain.User;
+import com.brainstation23.erp.model.dto.UserResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,8 +22,15 @@ import com.brainstation23.erp.persistence.entity.UserEntity;
 import com.brainstation23.erp.persistence.repository.UserRepository;
 import com.brainstation23.erp.service.UserService;
 import com.brainstation23.erp.util.RandomUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @DataJpaTest
 public class UserServiceTest {
@@ -31,6 +44,10 @@ public class UserServiceTest {
     private UserService userService;
 
     private UserMapper userMapper;
+
+    private String name = "Test User";
+    private String email = "test.user@example.com";
+    private String password = "password";
 
     @BeforeEach
     void init() {
@@ -61,15 +78,51 @@ public class UserServiceTest {
 
         // Then
         assertNotNull(createdUserId);
-//        assertEquals(id, createdUserId);
-
-        // Verify that the user was saved to the database
-//        UserEntity savedEntity = entityManager.find(UserEntity.class, id);
-////        assertNotNull(savedEntity);
-//        assertEquals(entity.getName(), savedEntity.getName());
-//        assertEquals(entity.getEmail(), savedEntity.getEmail());
-//        assertEquals(entity.getPassword(), savedEntity.getPassword());
-//        assertEquals(entity.getRole(), savedEntity.getRole());
     }
+
+
+    @Test
+@DisplayName("Test create user with existing email")
+void testCreateUserWithExistingEmail() {
+    // Given
+    CreateUserRequest request = new CreateUserRequest();
+    UUID id = UUID.randomUUID();
+//    request.setId(id);
+    request.setName("Test User");
+    request.setEmail("example@gmail.com");
+    request.setPassword("password");
+    request.setRole("USER");
+
+    UserEntity entity = new UserEntity();
+    entity.setId(id);
+    entity.setName(request.getName());
+    entity.setEmail(request.getEmail());
+    entity.setPassword(request.getPassword());
+    entity.setRole(request.getRole());
+
+    entityManager.persist(entity);
+    entityManager.flush();
+
+    // When
+    AlreadyExistsException exception = assertThrows(AlreadyExistsException.class, () -> {
+        userService.createOne(request);
+    });
+
+    // Then
+    assertEquals("User already exists with email: example@gmail.com", exception.getMessage());
+}
+
+    @Test
+    void testGetAllUsers() {
+        Page<User> users = userService.getAll(PageRequest.of(0, 10));
+        assertNotNull(users);
+    }
+
+
+
+
+
+
+
 
 }
