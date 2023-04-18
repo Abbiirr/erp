@@ -1,5 +1,6 @@
 package com.brainstation23.erp.exception.custom;
 
+import com.brainstation23.erp.exception.custom.custom.AlreadyExistsException;
 import com.brainstation23.erp.exception.custom.custom.NotFoundException;
 import com.brainstation23.erp.exception.custom.custom.UnauthorizedAccessException;
 import lombok.extern.slf4j.Slf4j;
@@ -28,5 +29,23 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleCustomException(UnauthorizedAccessException ex) {
         log.error("A custom exception occurred: ", ex);
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(AlreadyExistsException.class)
+    public ResponseEntity<String> handleCustomException(AlreadyExistsException ex) {
+        log.error("A custom exception occurred: ", ex);
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<String> handleCustomException(IllegalArgumentException ex) {
+        log.error("A custom exception occurred: ", ex);
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<String> handleCustomException(IllegalStateException ex) {
+        log.error("A custom exception occurred: ", ex);
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 }

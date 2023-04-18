@@ -2,6 +2,7 @@ package com.brainstation23.erp.service;
 
 import java.util.Optional;
 
+import com.brainstation23.erp.exception.custom.custom.AlreadyExistsException;
 import com.brainstation23.erp.exception.custom.custom.NotFoundException;
 	import com.brainstation23.erp.mapper.OrganizationMapper;
 import com.brainstation23.erp.mapper.UserMapper;
@@ -50,22 +51,25 @@ public class UserService {
         return userMapper.entityToDomain(entity);
     }
 
-    public UUID createOne(CreateUserRequest createRequest) {
-        var entity = new UserEntity();
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        String hashedPassword = passwordEncoder.encode(createRequest.getPassword());
-        entity.setId(UUID.randomUUID())
-                .setName(createRequest.getName())
-                .setEmail(createRequest.getEmail())
-                .setPassword(hashedPassword)
-                .setRole(createRequest.getRole());
-        var createdEntity = userRepository.save(entity);
-
-//        var user = userMapper.entityToDomain(createdEntity);
-//        System.out.println("User: " + user);
-//        System.out.println("User: " + user.getCreatedAt());
-        return createdEntity.getId();
+    public UUID createOne(CreateUserRequest createRequest) throws AlreadyExistsException {
+    var userOptional = userRepository.findByEmail(createRequest.getEmail());
+    if(userOptional.isPresent()) {
+        System.out.println("User already exists with email: " + createRequest.getEmail());
+        throw new AlreadyExistsException("User already exists with email: " + createRequest.getEmail());
     }
+    var entity = new UserEntity();
+    BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    String hashedPassword = passwordEncoder.encode(createRequest.getPassword());
+    entity.setId(UUID.randomUUID())
+          .setName(createRequest.getName())
+          .setEmail(createRequest.getEmail())
+          .setPassword(hashedPassword)
+          .setRole(createRequest.getRole());
+    var createdEntity = userRepository.save(entity);
+
+    return createdEntity.getId();
+}
+
 
 //    public void updateOne(UUID id, UpdateUserRequest updateRequest) {
 //        var entity = userRepository.findById(id)
