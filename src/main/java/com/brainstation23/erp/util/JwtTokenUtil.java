@@ -15,7 +15,9 @@ import java.util.UUID;
 @Component
 public class JwtTokenUtil {
     @Value("my_secret_key")
-    private String secret;
+    private String secret = "my_secret_key";
+
+    private static final String JWT_SECRET_KEY = "my_secret_key";
 
     public String generateToken(User user) {
         Date now = new Date();
@@ -36,6 +38,23 @@ public class JwtTokenUtil {
                 .getBody();
 
         return UUID.fromString(claims.getSubject());
+    }
+
+    public boolean validateToken(String token) {
+        try {
+            Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
+            return true;
+        } catch (JwtException | IllegalArgumentException e) {
+            throw new RuntimeException("Expired or invalid JWT token");
+        }
+    }
+
+    public static boolean checkIfAdmin(String token) {
+        Claims claims = Jwts.parser()
+                .setSigningKey(JWT_SECRET_KEY.getBytes())
+                .parseClaimsJws(token)
+                .getBody();
+        return claims.get("role").equals("ADMIN");
     }
 }
 

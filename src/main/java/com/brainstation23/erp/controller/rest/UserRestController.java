@@ -19,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import com.brainstation23.erp.util.JwtTokenUtil;
 
 import javax.validation.Valid;
 import java.util.UUID;
@@ -51,22 +52,27 @@ public class UserRestController {
 
 		System.out.println("token = " + token);
 
-		// Parse token and check role
-		Claims claims = null;
-		try {
-			claims = Jwts.parser().setSigningKey(JWT_SECRET_KEY.getBytes()).parseClaimsJws(token).getBody();
-		} catch (Exception e) {
-			System.out.println("Failed to parse JWT token");
-			e.printStackTrace();
-			throw new Exception("Invalid JWT token");
-		}
-
-		String roles = (String) claims.get("role");
-		System.out.println("roles = " + roles);
-
-		if (!roles.contains("ADMIN")) {
+		boolean isAdmin =  JwtTokenUtil.checkIfAdmin(token);
+		if(!isAdmin) {
 			throw new UnauthorizedAccessException("Only admins can access this endpoint");
 		}
+
+		// Parse token and check role
+//		Claims claims = null;
+//		try {
+//			claims = Jwts.parser().setSigningKey(JWT_SECRET_KEY.getBytes()).parseClaimsJws(token).getBody();
+//		} catch (Exception e) {
+//			System.out.println("Failed to parse JWT token");
+//			e.printStackTrace();
+//			throw new Exception("Invalid JWT token");
+//		}
+//
+//		String roles = (String) claims.get("role");
+//		System.out.println("roles = " + roles);
+//
+//		if (!roles.contains("ADMIN")) {
+//			throw new UnauthorizedAccessException("Only admins can access this endpoint");
+//		}
 
 		var domains = userService.getAll(pageable);
 		return ResponseEntity.ok(domains.map(userMapper::domainToResponse));
@@ -80,7 +86,7 @@ public class UserRestController {
 		var domain = userService.getOne(id);
 		return ResponseEntity.ok(userMapper.domainToResponse(domain));
 	}
-	
+
 
 //	@Operation(summary = "Update Single User")
 //	@PutMapping("{id}")
