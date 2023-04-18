@@ -56,5 +56,13 @@ public class JwtTokenUtil {
                 .getBody();
         return claims.get("role").equals("ADMIN");
     }
+
+    public static String extractRole(String token) {
+        Claims claims = Jwts.parser()
+                .setSigningKey(JWT_SECRET_KEY.getBytes())
+                .parseClaimsJws(token)
+                .getBody();
+        return (String) claims.get("role");
+    }
 }
 

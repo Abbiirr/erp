@@ -46,25 +46,20 @@ public class AuthRestController {
 		var location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(id).toUri();
 		return ResponseEntity.created(location).build();
 	}
-    @Operation(summary = "Authenticate User")
-    @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
-        log.info("Authenticating User: {} ", loginRequest.getEmail());
-        try {
-            System.out.println("loginRequest.getEmail() = " + loginRequest.getEmail());
-            System.out.println("loginRequest.getPassword() = " + loginRequest.getPassword());
-//            User user = userService.authenticate(loginRequest.getEmail(), loginRequest.getPassword());
-//            String token = jwtTokenUtil.generateToken(user);
-            String token = userService.authenticate(loginRequest.getEmail(), loginRequest.getPassword());
+   @Operation(summary = "Authenticate User")
+@PostMapping("/login")
+public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
+    log.info("Authenticating User: {} ", loginRequest.getEmail());
+    try {
+        String token = userService.authenticate(loginRequest.getEmail(), loginRequest.getPassword());
+        String roles = JwtTokenUtil.extractRole(token);
+        System.out.println("User has roles: " + roles);
+        return ResponseEntity.ok(token);
 
-            Claims claims = Jwts.parser().setSigningKey(JWT_SECRET_KEY.getBytes()).parseClaimsJws(token).getBody();
-            String roles = (String) claims.get("role");
-            System.out.println("User has roles: " + roles);
-            return ResponseEntity.ok(token);
-
-        } catch (Exception ex) {
-            System.out.println("ex = " + ex);
-            return ResponseEntity.badRequest().body("Invalid username or password");
-        }
+    } catch (Exception ex) {
+        System.out.println("ex = " + ex);
+        return ResponseEntity.badRequest().body("Invalid username or password");
     }
+}
+
 }
