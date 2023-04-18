@@ -6,6 +6,8 @@ import com.brainstation23.erp.mapper.UserMapper;
 import com.brainstation23.erp.model.dto.CreateUserRequest;
 import com.brainstation23.erp.model.dto.UserResponse;
 //import com.brainstation23.erp.model.dto.UpdateUserRequest;
+import com.brainstation23.erp.service.UserAuthorizationService;
+import com.brainstation23.erp.service.UserInputValidationService;
 import com.brainstation23.erp.service.UserService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -14,6 +16,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springdoc.api.annotations.ParameterObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -35,32 +38,25 @@ public class UserRestController {
 
 	private static final String JWT_SECRET_KEY = "my_secret_key";
 
-	@Operation(summary = "Get All Users")
-	@GetMapping
-	public ResponseEntity<Page<UserResponse>> getAll(@ParameterObject Pageable pageable, @RequestHeader(value = "optional-value", required = true) String authHeader) throws Exception {
-		log.info("Getting List of Users");
-		System.out.println("Trying to get all users");
+	@Autowired
+    private UserInputValidationService userInputValidationService;
 
-		System.out.println("authHeader = " + authHeader);
+    @Autowired
+    private UserAuthorizationService userAuthorizationService;
 
-		if(authHeader == null || !authHeader.startsWith("Bearer ")){
-			throw new Exception("Authorization header must be provided");
-		}
+    @Operation(summary = "Get All Users")
+    @GetMapping
+    public ResponseEntity<Page<UserResponse>> getAll(@ParameterObject Pageable pageable, @RequestHeader(value = "optional-value", required = true) String authHeader) throws Exception {
+        log.info("Getting List of Users");
 
-		// Extract token from header
-		String token = authHeader.substring(7);
+        userInputValidationService.validatePageable(pageable);
+        userInputValidationService.validateAuthorizationHeader(authHeader);
 
-		System.out.println("token = " + token);
+        userAuthorizationService.authorizeRequest(authHeader);
 
-		boolean isAdmin =  JwtTokenUtil.checkIfAdmin(token);
-		if(!isAdmin) {
-			throw new UnauthorizedAccessException("Only admins can access this endpoint");
-		}
-
-
-		var domains = userService.getAll(pageable);
-		return ResponseEntity.ok(domains.map(userMapper::domainToResponse));
-	}
+        var domains = userService.getAll(pageable);
+        return ResponseEntity.ok(domains.map(userMapper::domainToResponse));
+    }
 
 
 	@Operation(summary = "Get Single User")

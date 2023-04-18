@@ -40,9 +40,9 @@ public class JwtTokenUtil {
         return UUID.fromString(claims.getSubject());
     }
 
-    public boolean validateToken(String token) {
+    public static boolean validateToken(String token) {
         try {
-            Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
+            Jwts.parser().setSigningKey(JWT_SECRET_KEY.getBytes()).parseClaimsJws(token);
             return true;
         } catch (JwtException | IllegalArgumentException e) {
             throw new RuntimeException("Expired or invalid JWT token");

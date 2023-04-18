@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.awt.*;
+
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
@@ -45,6 +47,12 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(IllegalStateException.class)
     public ResponseEntity<String> handleCustomException(IllegalStateException ex) {
+        log.error("A custom exception occurred: ", ex);
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(HeadlessException.class)
+    public ResponseEntity<String> handleCustomException(HeadlessException ex) {
         log.error("A custom exception occurred: ", ex);
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
