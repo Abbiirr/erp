@@ -1,6 +1,8 @@
 package com.brainstation23.erp.controller.rest;
 
 import com.brainstation23.erp.exception.custom.custom.UnauthorizedAccessException;
+import com.brainstation23.erp.service.UserAuthorizationService;
+import com.brainstation23.erp.service.UserInputValidationService;
 import com.brainstation23.erp.util.JwtTokenUtil;
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,21 +27,21 @@ public class RoleController {
     @Autowired
     private RoleService roleService;
 
+    @Autowired
+    private UserInputValidationService userInputValidationService;
+
+    @Autowired
+    private UserAuthorizationService userAuthorizationService;
+
     @GetMapping
     public ResponseEntity<List<String>> getAllRoles(@ParameterObject Pageable pageable, @RequestHeader(value = "optional-value", required = true) String authHeader) throws Exception {
-        if(authHeader == null || !authHeader.startsWith("Bearer ")){
-			throw new Exception("Authorization header must be provided");
-		}
 
-		// Extract token from header
-		String token = authHeader.substring(7);
+        userInputValidationService.validatePageable(pageable);
 
-		System.out.println("token = " + token);
+        userInputValidationService.validateAuthorizationHeader(authHeader);
 
-		boolean isAdmin =  JwtTokenUtil.checkIfAdmin(token);
-		if(!isAdmin) {
-			throw new UnauthorizedAccessException("Only admins can access this endpoint");
-		}
+        userAuthorizationService.authorizeRequest(authHeader);
+
         List<String> roles = Collections.singletonList(roleService.getAllRoles());
         return ResponseEntity.ok(roles);
     }
