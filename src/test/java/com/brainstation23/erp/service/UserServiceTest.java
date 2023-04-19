@@ -13,6 +13,8 @@ import com.brainstation23.erp.model.dto.UserResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
@@ -48,6 +50,11 @@ public class UserServiceTest {
     private String name = "Test User";
     private String email = "test.user@example.com";
     private String password = "password";
+
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+    }
 
     @BeforeEach
     void init() {
@@ -117,6 +124,41 @@ void testCreateUserWithExistingEmail() {
         Page<User> users = userService.getAll(PageRequest.of(0, 10));
         assertNotNull(users);
     }
+
+ @Test
+void testGetAll() {
+    // create two user entities
+    UserEntity user1 = new UserEntity();
+    user1.setId(UUID.randomUUID());
+    user1.setName("John");
+    user1.setEmail("john@example.com");
+    user1.setPassword("password");
+    user1.setRole("ROLE_USER");
+
+    UserEntity user2 = new UserEntity();
+    user2.setId(UUID.randomUUID());
+    user2.setName("Jane");
+    user2.setEmail("jane@example.com");
+    user2.setPassword("password");
+    user2.setRole("ROLE_ADMIN");
+
+    // persist the user entities
+    entityManager.persist(user1);
+    entityManager.persist(user2);
+    entityManager.flush();
+
+     // call the service method
+    Page<User> page = userService.getAll(PageRequest.of(0, 10));
+
+    List<User> userList = page.getContent();
+
+    System.out.println("userList = " + userList);
+
+    // assert the result
+    assertEquals(2, page.getTotalElements());
+}
+
+
 
 
 
