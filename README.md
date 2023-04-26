@@ -1,5 +1,11 @@
 # ERP - Java Trainees 2023
 
+## This is the deployed url
+
+```
+https://erp-production-2192.up.railway.app/
+```
+
 Project for Trainees
 
 ## Client Requirement
