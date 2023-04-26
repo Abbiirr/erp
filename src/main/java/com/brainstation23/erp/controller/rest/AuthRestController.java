@@ -40,6 +40,7 @@ public class AuthRestController {
 
     @Operation(summary = "Create Single User")
 	@PostMapping("/signup")
+    @CrossOrigin(origins = "https://erp-production-2192.up.railway.app/")
 	public ResponseEntity<Void> createOne(@RequestBody @Valid CreateUserRequest createRequest) {
 		log.info("Creating an User: {} ", createRequest);
 		var id = userService.createOne(createRequest);
